@@ -1,6 +1,5 @@
-const { count } = require('../orm/mongoose/schemas/Products');
 const MongooseProducts = require('../orm/mongoose/schemas/Products');
-
+const logger = require('../config/logs/logger');
 
 module.exports = class {
   constructor() {
@@ -12,5 +11,14 @@ module.exports = class {
     let totalProducts = MongooseProducts.estimatedDocumentCount();
     ([products, totalProducts] = await Promise.all([products, totalProducts]));
     return { products, totalProducts };
+  }
+
+  async bulkCreate(products) {
+    try {
+      const result = await MongooseProducts.insertMany(products);
+      return result;
+    } catch (error) {
+      logger.error(error);
+    }
   }
 }
