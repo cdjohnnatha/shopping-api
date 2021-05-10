@@ -1,5 +1,5 @@
-const logger = require('../config/logs/logger');
-const { httpCodes } = require('../utils/consts/request-consts')
+const logger = require('../../infrastructure/config/logs/logger');
+const { httpCodes } = require('../../utils/consts/request-consts')
 
 const defaultErrorHandler = (err, req, res, next) => {
   let defaultErrorMessage = 'Request unavailable';

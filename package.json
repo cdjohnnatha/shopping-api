@@ -3,17 +3,24 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./src/loader",
-    "dev": "NODE_ENV=dev nodemon ./src/config/bin/www --max-old-space-size=8096",
-    "test": "mocha test mocha-junit-reporter",
-    "coverage": "nyc --reporter=lcov npm run test"
+    "start": "node ./src/infrastructure/loader",
+    "dev": "NODE_ENV=dev nodemon ./src/infrastructure/loader --max-old-space-size=8096",
+    "test": "NODE_ENV=test mocha test mocha-junit-reporter",
+    "coverage": "NODE_ENV=test nyc --reporter=lcov npm run test",
+    "graphql:codegen": "graphql codegen"
   },
   "dependencies": {
     "bottleneck": "^2.19.5",
     "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^8.2.0",
     "express": "~4.16.1",
+    "express-graphql": "^0.12.0",
+    "graphql": "^15.5.0",
+    "graphql-compose": "^8.0.1",
+    "graphql-compose-mongoose": "^9.3.0",
+    "mongoose": "^5.12.7",
     "morgan": "~1.9.1",
     "winston": "^3.3.3"
   },
@@ -30,6 +37,8 @@
     "mocha-junit-reporter": "^2.0.0",
     "nodemon": "^2.0.7",
     "nyc": "^15.1.0",
-    "prettier": "^2.2.1"
+    "prettier": "^2.2.1",
+    "graphql-cli": "4.1.0",
+    "@graphql-cli/codegen": "1.17.23"
   }
 }
