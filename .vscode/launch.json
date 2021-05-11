@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach debug",
+            "port": 3000,
+            "processId": "${command:PickProcess}",
+            "protocol": "inspector",
+            "restart": true,
+            "timeout": 99999999,
+        },
+    ]
+ }

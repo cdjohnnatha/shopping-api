@@ -25,6 +25,11 @@ const ProductSchema = new Schema({
   },
   images: [ProductImageSchema],
   currency: CurrencySchema,
+  in_carts: {
+    quantity: Number,
+    clientId: String,
+    timestamp: Date,
+  },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   deletedAt: {

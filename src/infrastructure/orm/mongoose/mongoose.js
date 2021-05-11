@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
 const logger = require('../../config/logs/logger');
-
 let MONGO_HOST = process.env.MONGO_HOST || '127.0.0.1';
 let MONGO_PORT = process.env.MONGO_PORT || '27017';
 let MONGO_DB_NAME = process.env.MONGO_DB_NAME || 'shopping';
+
+if (process.env.NODE_ENV === 'test') {
+  MONGO_DB_NAME = 'test';
+}
 const DB_URI = `mongodb://${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB_NAME}`;
 
 const mongooseSettings = {

@@ -9,7 +9,6 @@ const logger = require('../logs/logger');
 const http = require('http');
 const {
   onError,
-  // onListening,
   uncaughtExceptionMonitorHandler,
   unhandledRejectionHandler,
   warningExceptionHandler
@@ -42,11 +41,11 @@ const server = http.createServer(app);
  */
 
 server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
-process.on('unhandledRejection', unhandledRejectionHandler);
-process.on('uncaughtExceptionMonitor', uncaughtExceptionMonitorHandler);
-process.on('warning', warningExceptionHandler);
+// server.on('error', onError);
+// server.on('listening', onListening);
+// process.on('unhandledRejection', unhandledRejectionHandler);
+// process.on('uncaughtExceptionMonitor', uncaughtExceptionMonitorHandler);
+// process.on('warning', warningExceptionHandler);
 /**
  * Normalize a port into a number, string, or false.
  */
@@ -67,3 +66,4 @@ function normalizePort(val) {
   return false;
 }
 
+module.exports = app;

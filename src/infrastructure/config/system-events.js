@@ -13,7 +13,7 @@ const onError = (error) => {
       function: 'onError',
     },
   });
-  const { port } = config.app;
+  const port = process.env.PORT || 3000;
 
   if (error.syscall !== 'listen') {
     throw error;
