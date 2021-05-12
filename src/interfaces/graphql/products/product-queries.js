@@ -1,7 +1,8 @@
-// const { authorization, accessLevels } = require('../../authorization');
-const { ProductsPaginated } = require('./product-types');
+const { GraphQLList } = require('graphql');
+const { ProductsPaginated, ProductType } = require('./product-types');
+const { ProductFilterInputType } = require('./product-input-types');
 const { PaginationInputType } = require('../common/pagination/pagination-input-types');
-const { productsPaginatedResolver } = require('./product-resolvers');
+const { productsPaginatedResolver, productsFilterResolver } = require('./product-resolvers');
 
 
 const ProductsQueries = {
@@ -12,6 +13,14 @@ const ProductsQueries = {
       pagination: { type: PaginationInputType }
     },
     resolve: productsPaginatedResolver
+  },
+  productsFilter: {
+    type: GraphQLList(ProductType),
+    description: 'This query a products list from filter.',
+    args: {
+      filters: { type: ProductFilterInputType }
+    },
+    resolve: productsFilterResolver
   },
 };
 

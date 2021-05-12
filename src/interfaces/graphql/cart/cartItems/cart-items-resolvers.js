@@ -6,8 +6,8 @@ const AddCartItemResolver = async (_obj, args, context) => {
   try {
     const { cartItem } = args;
     const cartRepository = new CartRepositoryMongo();
-    const response = await cartRepository.addCartItem({ cartItem });
-    return { response };
+    const cart = await cartRepository.addCartItem(cartItem);
+    return cart;
   } catch (error) {
     logger.error({ error, errorFrom: 'AddCartItemResolver', context });
     throw error;
@@ -19,7 +19,19 @@ const UpdateCartItemQuantityResolver = async (_obj, args, context) => {
     const { cartItem } = args;
     const cartRepository = new CartRepositoryMongo();
     const updatedCart = await cartRepository.updateCartItemQuantity(cartItem);
-    return { updatedCart };
+    return updatedCart;
+  } catch (error) {
+    logger.error({ error, errorFrom: 'UpdateCartItemQuantityResolver', context });
+    throw error;
+  }
+};
+
+const RemoveCartItemResolver = async (_obj, args, context) => {
+  try {
+    const { productId } = args;
+    const cartRepository = new CartRepositoryMongo();
+    const updatedCart = await cartRepository.removeCartItem({ productId });
+    return updatedCart;
   } catch (error) {
     logger.error({ error, errorFrom: 'UpdateCartItemQuantityResolver', context });
     throw error;
@@ -29,4 +41,5 @@ const UpdateCartItemQuantityResolver = async (_obj, args, context) => {
 module.exports = {
   AddCartItemResolver,
   UpdateCartItemQuantityResolver,
+  RemoveCartItemResolver,
 }

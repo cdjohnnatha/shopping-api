@@ -14,7 +14,8 @@ const ProductFactory = factory => factory.define('Product', ProductSchema, (_bui
 
   let attrs = {
     name: commerce.productName(),
-    quantityAvailable: datatype.number(30),
+    quantityAvailable: 1,
+    maxQuantityPerCustomer: 2,
     category: commerce.department(),
     price: commerce.price(100, 5000),
     description: commerce.productDescription(),
@@ -27,19 +28,19 @@ const ProductFactory = factory => factory.define('Product', ProductSchema, (_bui
         path: `${guitarImageFolderPath}/1200x395.jpg`,
         tags: 'les-paul',
         size: '1200x450',
-        type: 'FULL',
+        type: 'full',
       },
       {
         path: `${guitarImageFolderPath}/320x120.jpg`,
         tags: 'les-paul',
         size: '320x120',
-        type: 'LIST',
+        type: 'list',
       },
       {
         path: `${guitarImageFolderPath}/180x68.jpg`,
         tags: 'les-paul',
         size: '180x68',
-        type: 'THUMBNAIL',
+        type: 'thumbnail',
       },
     ]
   };

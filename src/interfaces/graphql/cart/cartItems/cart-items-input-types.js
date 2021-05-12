@@ -6,8 +6,6 @@ const {
   GraphQLEnumType,
 } = require('graphql');
 
-const { ProductType } = require('../../products/product-types');
-
 const CartStatusEnumType = new GraphQLEnumType({
   name: 'CartStatusEnumType',
   description: 'Cart status definition.',
@@ -30,7 +28,6 @@ const UpdateCartItemQuantityInputType = new GraphQLInputObjectType({
   description: 'Cart item input used increase or decrease a product in a cart.',
   fields: {
     productId: { type: GraphQLNonNull(GraphQLID) },
-    cartId: { type: GraphQLNonNull(GraphQLID) },
     quantity: { type: GraphQLNonNull(GraphQLInt) },
   }
 });

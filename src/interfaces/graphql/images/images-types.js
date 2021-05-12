@@ -6,7 +6,7 @@ const {
 
 const ImageEnumType = new GraphQLEnumType({
   name: 'ImageEnumType',
-  description: 'Image types used around ecommerce application such as list, full image, thumbnail.',
+  description: 'Image types used around ecommerce application such as list, \nfull image, thumbnail.',
   values: {
     LIST: { value: 'list' },
     FULL: { value: 'full' },

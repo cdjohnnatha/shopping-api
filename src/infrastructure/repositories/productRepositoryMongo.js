@@ -1,3 +1,4 @@
+const Mongoose = require('../orm/mongoose/mongoose');
 const MongooseProducts = require('../orm/mongoose/schemas/Products');
 const logger = require('../config/logs/logger');
 
@@ -20,5 +21,19 @@ module.exports = class {
     } catch (error) {
       logger.error(error);
     }
+  }
+
+  async filter(filterParams) {
+    const { idList } = filterParams;
+    const formattedIds = [];
+    for (let id of idList) {
+      const mongoId = Mongoose.instance.Types.ObjectId(id);
+      formattedIds.push(mongoId);
+    }
+    const filterQuery = {
+      _id: { $in : formattedIds }
+    };
+    let products = await MongooseProducts.find(filterQuery);
+    return products;
   }
 }

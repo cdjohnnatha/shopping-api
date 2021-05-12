@@ -1,3 +1,6 @@
+const logger = require('../../../infrastructure/config/logs/logger');
+const CartRepositoryMongo = require('../../../infrastructure/repositories/cartRepositoryMongo');
+
 const cartExpirationRoutine = () => {
   // var carts = db.carts.find({ status: "expiring" })
   // for (var i = 0; i < carts.length; i++) {
@@ -54,3 +57,19 @@ const cartCheckout = () => {
   //   }
   // })
 }
+
+
+const activeCartResolver = async () => {
+  try {
+    const cartRepositoryMongo = new CartRepositoryMongo();
+    const cart = await cartRepositoryMongo.getActiveCart();
+    return cart;
+  } catch (error) {
+    logger.error({ error, errorFrom: 'productsPaginatedResolver' });
+    throw error;
+  }
+}
+
+module.exports = {
+  activeCartResolver,
+};

@@ -1,6 +1,7 @@
 const ProductFieldsType = `
   _id
   name
+  quantityAvailable
   maxQuantityPerCustomer
   category
   description
@@ -17,7 +18,7 @@ const ProductFieldsType = `
   }
 `;
 const ProductType = `
-  product{ ${ProductFieldsType} }
+  products { ${ProductFieldsType} }
 `;
 
 module.exports = {

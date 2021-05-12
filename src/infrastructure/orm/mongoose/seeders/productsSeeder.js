@@ -11,6 +11,7 @@ const Product = () => {
   return {
     name: commerce.productName(),
     quantityAvailable: datatype.number(30),
+    maxQuantityPerCustomer: 3,
     category: commerce.department(),
     price: commerce.price(100, 5000),
     description: commerce.productDescription(),
@@ -23,19 +24,19 @@ const Product = () => {
         path: `${STATIC_IMAGES_PATH}/${GUITAR_IMAGES_FOLDER[imageIndex]}/1200x395.jpg`,
         tags: 'les-paul',
         size: '1200x450',
-        type: 'FULL',
+        type: 'full',
       },
       {
         path: `${STATIC_IMAGES_PATH}/${GUITAR_IMAGES_FOLDER[imageIndex]}/320x120.jpg`,
         tags: 'les-paul',
         size: '320x120',
-        type: 'LIST',
+        type: 'list',
       },
       {
         path: `${STATIC_IMAGES_PATH}/${GUITAR_IMAGES_FOLDER[imageIndex]}/180x68.jpg`,
         tags: 'les-paul',
         size: '180x68',
-        type: 'THUMBNAIL',
+        type: 'thumbnail',
       },
     ]
   }

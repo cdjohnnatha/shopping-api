@@ -1,5 +1,5 @@
 const paginationInputType = (page=0, rowsPerPage=10) => `
-  pagination{
+  pagination: {
     currentPage: ${page},
     rowsPerPage: ${rowsPerPage}
   }

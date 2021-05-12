@@ -1,12 +1,16 @@
 /* eslint-disable no-else-return */
-const { GraphQLBoolean, GraphQLNonNull, GraphQLString, GraphQLList } = require('graphql');
-const { ProductType } = require('../../products/product-types');
-const { AddCartItemResolver, UpdateCartItemQuantityResolver } = require('./cart-items-resolvers');
+const { GraphQLID, GraphQLNonNull } = require('graphql');
+const {
+  AddCartItemResolver,
+  UpdateCartItemQuantityResolver,
+  RemoveCartItemResolver,
+} = require('./cart-items-resolvers');
 const { AddCartItemInputType, UpdateCartItemQuantityInputType } = require('./cart-items-input-types');
+const { CartType } = require('../cart-types');
 
 const cartItemMutations = {
-  addCartItemMutation: {
-    type: GraphQLBoolean,
+  addCartItem: {
+    type: CartType,
     description: 'Method used to add a product in a cart.',
     args: {
       cartItem: {
@@ -15,8 +19,8 @@ const cartItemMutations = {
     },
     resolve: AddCartItemResolver,
   },
-  updateCartItemQuantityMutation: {
-    type: GraphQLBoolean,
+  updateCartItemQuantity: {
+    type: CartType,
     description: 'Method used to update cart item quantity, increase/decrease.',
     args: {
       cartItem: {
@@ -24,6 +28,14 @@ const cartItemMutations = {
       },
     },
     resolve: UpdateCartItemQuantityResolver,
+  },
+  removeCartItem: {
+    type: CartType,
+    description: 'Method used to update cart item quantity, increase/decrease.',
+    args: {
+      productId: { type: GraphQLNonNull(GraphQLID) },
+    },
+    resolve: RemoveCartItemResolver,
   },
 };
 

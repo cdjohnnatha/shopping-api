@@ -11,22 +11,44 @@ const {
   getResultFromQuery,
   buildMultipleInputObjects,
 } = require('../support/graphql-helpers');
-// const { CleanCustomers } = require('../../support/database-helper');
+const Factories = require('../factories/index');
+const ProductsSharedExamples = require('../support/sharedExamples/productsSharedExamples');
+const PaginationSharedExamples = require('../support/sharedExamples/paginationSharedExamples');
+const GraphqlSharedExamples = require('../support/sharedExamples/graphqlSharedExamples');
 
 const { expect } = chai;
 chai.use(chaiHttp);
 
 describe('Products', () => {
   beforeEach(async () => {
-    // validParams = await factories.build('Product', {}, { attributes: true });
-    // validParams = { beneficiary: buildGraphqlInputFromObject(validParams) };
+    await Factories.factory.create('Product', {}, { });
   });
+  after(async () => {
+    await Factories.factory.cleanUp();
+  });
+
   it('Get products paginated', async () => {
     const response = await chai
       .request(server)
       .post(API_URL)
       .send({ query: productsPaginated() });
-    console.log('response.body', response);
     expect(response).to.have.status(200);
+    const { products } = response.body.data.productsPaginated;
+    const productShanredExamples = new ProductsSharedExamples(products);
+    const paginationSharedExamples = new PaginationSharedExamples(response.body.data.productsPaginated);
+    productShanredExamples.shouldBehaveLikeProduct();
+    paginationSharedExamples.shouldBehaveLikePaginated();
   });
+
+  // it('Get products without pagination, should get an error', async () => {
+  //   const inputParams = {};
+  //   const response = await chai
+  //     .request(server)
+  //     .post(API_URL)
+  //     .send({ query: productsPaginated(inputParams) });
+  //   expect(response).to.have.status(400);
+  //   expect(response.error).to.exist;
+  //   const graphqlSharedExamples = new GraphqlSharedExamples({ error: response.error, queryName: 'productsPaginated' });
+  //   graphqlSharedExamples.shouldBehaveLikeMissingArgumentsGraphqlError();
+  // });
 });

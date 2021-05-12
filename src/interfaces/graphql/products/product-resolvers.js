@@ -17,6 +17,19 @@ const productsPaginatedResolver = async (_obj, args, context) => {
   }
 };
 
+const productsFilterResolver = async (_obj, args, context) => {
+  try {
+    const { filters } = args;
+    const productRepository = new ProductRepositoryMongo();
+    const products = await productRepository.filter(filters);
+    return products;
+  } catch (error) {
+    logger.error({ error, errorFrom: 'productsPaginatedResolver', context });
+    throw error;
+  }
+}
+
 module.exports = {
   productsPaginatedResolver,
+  productsFilterResolver,
 }

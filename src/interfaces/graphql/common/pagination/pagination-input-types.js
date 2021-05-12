@@ -6,8 +6,7 @@ const {
 
 const PaginationInputType = new GraphQLInputObjectType({
   name: 'PaginationInput',
-  description: `It represents the pagination input structure. It represents
-    how many objects will be listed.`,
+  description: 'It represents the pagination input structure. It represents how many objects will be listed.',
   fields: {
     rowsPerPage: {
       type: GraphQLNonNull(GraphQLInt),
