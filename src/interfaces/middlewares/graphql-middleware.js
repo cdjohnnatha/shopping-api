@@ -16,7 +16,7 @@ if (process.env.NODE_ENV !== 'prod') graphiql = true;
  * @param {Object} err - GraphqlError
  */
 const formatGraphqlErrorMessages = (error) => {
-  const { path, extensions } = error;
+  const { path, extensions  } = error;
 
   logger.customError({
     error,

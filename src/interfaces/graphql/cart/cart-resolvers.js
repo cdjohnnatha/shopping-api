@@ -70,6 +70,18 @@ const activeCartResolver = async () => {
   }
 }
 
+const cartCheckoutResolver = async (_obj, args, context) => {
+  try {
+    const cartRepositoryMongo = new CartRepositoryMongo();
+    const order = await cartRepositoryMongo.checkout(args);
+    return order;
+  } catch (error) {
+    logger.error({ error, errorFrom: 'productsPaginatedResolver' });
+    throw error;
+  }
+}
+
 module.exports = {
   activeCartResolver,
+  cartCheckoutResolver,
 };

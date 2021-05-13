@@ -1,13 +1,19 @@
 /* eslint-disable no-else-return */
-const { activeCartResolver } = require('./cart-resolvers');
-const { CartType } = require('./cart-types');
+const { cartCheckoutResolver } = require('./cart-resolvers');
+const { OrderType } = require('../order/order-types');
+const { PaymentInputType } = require('../payment/payment-input-types');
 
-const cartQueries = {
+const cartMutations = {
   checkout: {
-    type: CartType,
-    description: 'Method used to add a product in a cart.',
-    resolve: activeCartResolver,
+    type: OrderType,
+    args: {
+      payment: {
+        type: PaymentInputType,
+      },
+    },
+    description: 'Method used to purchase items from cart.',
+    resolve: cartCheckoutResolver,
   },
 };
 
-module.exports = cartQueries;
+module.exports = cartMutations;

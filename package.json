@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./src/infrastructure/loader",
-    "dev": "NODE_ENV=dev nodemon --inspect ./src/infrastructure/loader --max-old-space-size=8096",
+    "dev": "NODE_ENV=dev nodemon --inspect=0.0.0.0:9229 ./src/infrastructure/loader.js --max-old-space-size=8096",
     "test": "NODE_ENV=test nodemon --exec \"mocha -R min\" ./test/integration",
     "coverage": "NODE_ENV=test nyc --reporter=lcov npm run test",
     "seed": "node ./src/infrastructure/orm/mongoose/seeders",

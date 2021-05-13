@@ -64,7 +64,7 @@ class MongooseSingleton {
   async isPipelineLastErrorUpdatedExisting() {
     const productPipelineError = await mongoose.connection.db.command({ getLastError: 1 });
     logger.debug(productPipelineError);
-    return productPipelineError.updatedExisting;
+    return productPipelineError;
   }
 }
 

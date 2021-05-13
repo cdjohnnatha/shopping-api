@@ -1,7 +1,7 @@
 const { GraphQLSchema, GraphQLObjectType } = require('graphql');
 
 const ProductsQueries = require('./products/product-queries');
-const { CartItemsMutations, cartQueries } = require('./cart');
+const { CartItemsMutations, cartQueries, cartMutations } = require('./cart');
 /**
  * This instance is reponsible for define all the GraphQL queries for customers and
  * mutations available.
@@ -22,6 +22,7 @@ const publicSchema = new GraphQLSchema({
     name: 'mutation',
     fields: {
       ...CartItemsMutations,
+      ...cartMutations,
     },
   }),
 });

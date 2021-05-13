@@ -2,14 +2,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Docker: Attach to Node",
             "type": "node",
             "request": "attach",
-            "name": "Attach debug",
-            "port": 3000,
-            "processId": "${command:PickProcess}",
+            "port": 9229,
+            "address": "localhost",
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/usr/src/app",
             "protocol": "inspector",
             "restart": true,
-            "timeout": 99999999,
-        },
+            "resolveSourceMapLocations": [
+                "!**/node_modules/**"
+            ],
+        }
     ]
  }
