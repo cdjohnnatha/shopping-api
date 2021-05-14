@@ -45,6 +45,8 @@ module.exports = class {
         ).exec();
 
         const productToPush = { ...product, quantity: 1 };
+        productToPush.productId = product._id;
+        delete (productToPush._id)
         let cartUpdated = MongooseCart.updateOne(
           this._findCartQuery,
           {
