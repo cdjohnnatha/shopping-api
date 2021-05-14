@@ -10,7 +10,7 @@ const CartItemType = new GraphQLObjectType({
   name: 'CartItemType',
   description: 'Attributes definition for a product.',
   fields: {
-    _id: { type: GraphQLNonNull(GraphQLID) },
+    productId: { type: GraphQLNonNull(GraphQLID) },
     price: { type: GraphQLNonNull(GraphQLFloat) },
     quantity: { type: GraphQLNonNull(GraphQLInt) },
   }

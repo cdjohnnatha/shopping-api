@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./src/infrastructure/loader",
     "dev": "NODE_ENV=dev nodemon --inspect=0.0.0.0:9229 ./src/infrastructure/loader.js --max-old-space-size=8096",
-    "test": "NODE_ENV=test nodemon --exec \"mocha -R min\" ./test/integration",
+    "test": "NODE_ENV=test nodemon --inspect=0.0.0.0:9229  --exec \"mocha -R min\" ./test/integration",
     "coverage": "NODE_ENV=test nyc --reporter=lcov npm run test",
     "seed": "node ./src/infrastructure/orm/mongoose/seeders",
     "graphql:codegen": "graphql codegen"
@@ -30,6 +30,7 @@
     "@graphql-cli/codegen": "1.17.23",
     "chai": "^4.3.4",
     "chai-http": "^4.3.0",
+    "database-cleaner": "^1.3.0",
     "eslint": "^7.25.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-base": "^14.2.1",
@@ -38,6 +39,7 @@
     "eslint-plugin-react": "^7.23.2",
     "eslint-plugin-react-hooks": "^1.7.0",
     "factory-girl": "^5.0.4",
+    "factory-girl-mongoose": "^1.0.0",
     "graphql-cli": "4.1.0",
     "mocha": "^8.3.2",
     "mocha-junit-reporter": "^2.0.0",

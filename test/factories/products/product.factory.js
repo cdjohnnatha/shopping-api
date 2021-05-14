@@ -7,14 +7,14 @@ const ProductSchema = require('../../../src/infrastructure/orm/mongoose/schemas/
 const GUITAR_IMAGES_FOLDER_NAMES = ['floyd-1', 'floyd-2', 'flyInV', 'lespaul'];
 const STATIC_IMAGES_PATH = '/images/guitarImages';
 
-const ProductFactory = factory => factory.define('Product', ProductSchema, (_buildOptions) => {
+const ProductFactory = (factory, clientId) => factory.define('Product', ProductSchema, (buildOptions) => {
   const imageIndex = datatype.number(3);
   const guitarImageFolderName = GUITAR_IMAGES_FOLDER_NAMES[imageIndex];
   const guitarImageFolderPath = `${STATIC_IMAGES_PATH}/${guitarImageFolderName}/`;
 
   let attrs = {
-    name: commerce.productName(),
-    quantityAvailable: 1,
+    name: commerce.productName() + datatype.number(99999),
+    quantityAvailable: 5,
     maxQuantityPerCustomer: 2,
     category: commerce.department(),
     price: commerce.price(100, 5000),
@@ -45,6 +45,11 @@ const ProductFactory = factory => factory.define('Product', ProductSchema, (_bui
     ]
   };
 
+  if (buildOptions.inCart) {
+    attrs.in_carts = [];
+    attrs.in_carts.push({ clientId, quantity: 1, timestamp: new Date() });
+    attrs.quantityAvailable += 1;
+  }
 
 
   return attrs;

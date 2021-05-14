@@ -39,7 +39,7 @@ const PaymentType = new GraphQLObjectType({
     paymentType: { type: GraphQLNonNull(PaymentTypesEnum) },
     paymentCardType: { type: GraphQLNonNull(PaymentCardEnumType) },
     paymentStatus: { type: GraphQLNonNull(PaymentStatusEnumType) },
-    transactionId: { type: GraphQLList(GraphQLString) },
+    transactionId: { type: GraphQLString },
   }
 });
 

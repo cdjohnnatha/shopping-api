@@ -1,4 +1,4 @@
-const { GraphQLList } = require('graphql');
+const { GraphQLList, GraphQLNonNull } = require('graphql');
 const { ProductsPaginated, ProductType } = require('./product-types');
 const { ProductFilterInputType } = require('./product-input-types');
 const { PaginationInputType } = require('../common/pagination/pagination-input-types');
@@ -10,7 +10,7 @@ const ProductsQueries = {
     type: ProductsPaginated,
     description: 'This query gets the beneficiaries by a specific customer.',
     args: {
-      pagination: { type: PaginationInputType }
+      pagination: { type: GraphQLNonNull(PaginationInputType) }
     },
     resolve: productsPaginatedResolver
   },

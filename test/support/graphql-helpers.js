@@ -48,7 +48,10 @@ const queryString = (actionName, inputs, output) => {
  * @param {Object} body.data - Response body with graphql Result.
  * @param {String} queryName - Query name.
  */
-const getResultFromQuery = ({ data }, queryName) => data[queryName];
+const getResultFromQuery = ({ data }) => {
+  const [queryName] = Object.keys(data);
+  return data[queryName];
+}
 
 const buildGraphqlInputFromObject = (object) => {
   let input = '';

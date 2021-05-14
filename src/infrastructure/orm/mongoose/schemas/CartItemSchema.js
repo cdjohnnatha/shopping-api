@@ -6,7 +6,7 @@ const CurrencySchema = require('./CurrencySchema');
 const CartItemSchema = new Schema({
   productId:  {
     type: String,
-    unique: true
+    required: true
   },
   quantity: {
     type: Number,

@@ -70,55 +70,69 @@ module.exports = class {
 
   async updateCartItemQuantity({ productId, quantity }) {
     try {
-      const cart = await MongooseCart.findOne(this._findCartQuery, { products: 1 }).exec();
-      let currentProduct = null;
-      for (const { _doc: product } of cart.products) {
-        if (product._id.toString() === productId) {
-          currentProduct = product;
+      
+      const product = (await MongooseProducts.findOne(
+        {
+          _id: Mongoose.instance.Types.ObjectId(productId),
+          'in_carts.clientId': defaultClientId,
+          quantityAvailable: { $gte: 1 },
+        },
+      )).toObject();
+
+      if (!product) {
+        throw new Error('Invalid product');
+      }
+
+      if (product.quantityAvailable < quantity) {
+        throw new Error('Not enough quantity available for this item');
+      }
+      // if (currentProduct.quantityAvailable < quantity) {
+      //   throw new Error('Not enough available quantity for this item');
+      // }
+      const cart = (await MongooseCart.findOne(this._findCartQuery, { products: 1 }).exec()).toObject();
+      let cartProduct = null;
+      for (const product of cart.products) {
+        if (product.productId.toString() === productId) {
+          cartProduct = product;
           break;
         }
       }
-      if (currentProduct) {
-        const oldQuantity = currentProduct.quantity;
+      if (cartProduct) {
+        const oldQuantity = cartProduct.quantity;
         const quantityDiff = quantity - oldQuantity;
         const cartItemQuery = {
           ...this._findCartQuery,
-          'products._id': productId,
+          'products.productId': productId,
         };
 
         await MongooseCart.updateOne(cartItemQuery, {
+          $inc: {
+            total: +(quantity * cartProduct.price),
+            'products.$.quantity': quantity + cartProduct.quantity,
+            'quantity': +quantity,
+          },
           $set: {
             updatedAt: new Date(),
-            'products.$.quantity': quantity,
           },
         }).exec();
 
-        MongooseProducts.updateOne(
+        await MongooseProducts.updateOne(
           {
-            _id: productId,
-            'in_carts.id': defaultClientId,
-            quantity: { $gte: 1 },
+            _id: Mongoose.instance.Types.ObjectId(productId),
+            'in_carts.clientId': defaultClientId,
+            quantityAvailable: { $gte: 1 },
           },
           {
-            $inc: { quantity: -1 * quantityDiff },
+            $inc: { quantityAvailable: -1 * quantity },
             $set: {
-              'in_carts.$.quantity': quantity,
+              'in_carts.$.quantity': quantity + cartProduct.quantity,
               timestamp: new Date(),
             },
           }
         );
 
-        const productWasUpdated = await Mongoose.isPipelineLastErrorUpdatedExisting();
-        if (!productWasUpdated) {
-          await MongooseCart.updateOne(
-            { ...this._findCartQuery, 'products._id': productId },
-            {
-              $set: { 'in_carts.$.quantity': oldQuantity },
-            }
-          );
-        }
-        const cartUpdated = MongooseCart.findOne(this._findCartQuery);
-        return cartUpdated;
+        const cartUpdated = await MongooseCart.findOne(this._findCartQuery);
+        return cartUpdated.toObject();
       }
       throw new Error('Product not found in cart');
     } catch (error) {
@@ -136,7 +150,7 @@ module.exports = class {
       let currentProduct = null;
 
       for (const { _doc: product } of cart.products) {
-        if (product._id.toString() === productId) {
+        if (product.productId.toString() === productId) {
           currentProduct = product;
           break;
         }
@@ -145,33 +159,20 @@ module.exports = class {
         await MongooseCart.updateOne(
           { clientId: defaultClientId, status: 'Active' },
           {
-            $pull: { products: { _id: Mongoose.instance.Types.ObjectId(productId) } },
+            $pull: { products: { productId } },
             $inc: { quantity: -currentProduct.quantity, total: -currentProduct.price },
             $set: { updatedAt: new Date() },
           }
         ).exec();
 
         await MongooseProducts.updateOne(
+          { _id: Mongoose.instance.Types.ObjectId(productId) },
           {
-            _id: productId,
-            'in_carts.id': defaultClientId,
-            quantity: { $gte: 1 },
-          },
-          {
-            $inc: { quantity: +currentProduct.quantity },
-            $pull: { in_carts: { clientId: Mongoose.instance.Types.ObjectId(this._clientId) } },
+            $inc: { quantityAvailable: +currentProduct.quantity },
+            $pull: { in_carts: { clientId: this._clientId } },
           }
         ).exec();
 
-        const productWasUpdated = await Mongoose.isPipelineLastErrorUpdatedExisting();
-        if (!productWasUpdated) {
-          await MongooseCart.updateOne(
-            { ...this._findCartQuery, 'products._id': productId },
-            {
-              $set: { 'in_carts.$.quantity': oldQuantity },
-            }
-          );
-        }
         const cartUpdated = await MongooseCart.findOne(this._findCartQuery).exec();
         return cartUpdated;
       }
@@ -184,7 +185,7 @@ module.exports = class {
 
   async checkout({ payment }) {
     try {
-      const cart = (await MongooseCart.findOne(this._findCartQuery).exec()).toObject();
+      const cart = await MongooseCart.findOne(this._findCartQuery).exec();
       const { creditCardNumber } = payment;
       const last4DigitsCreditCart = creditCardNumber.substr(creditCardNumber.length - 4);
       const cardWhiteList = ['8889'];
@@ -197,7 +198,7 @@ module.exports = class {
       const productIds = [];
       for (const product of cart.products) {
         products.push(product._doc);
-        const productId = Mongoose.instance.Types.ObjectId(product._doc._id);
+        const productId = Mongoose.instance.Types.ObjectId(product._doc.productId);
         productIds.push(productId);
       }
       const order = {

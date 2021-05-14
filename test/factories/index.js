@@ -1,12 +1,15 @@
 const FactoryGirl = require('factory-girl');
 const ProductFactory = require('./products/product.factory');
-
+const CartFactory = require('./cart/cart.factory');
+const { ClientId } = require('../support/sharedConsts');
 class Factory {
   constructor() {
-    this._factory = FactoryGirl.factory;
-    this._adapter = new FactoryGirl.MongooseAdapter();
-    this._factory.setAdapter(this._adapter);
-    ProductFactory(this._factory);
+    const factory = FactoryGirl.factory;
+    const adapter = new FactoryGirl.MongooseAdapter();
+    factory.setAdapter(adapter);
+    this._factory = factory;
+    ProductFactory(this._factory, ClientId);
+    CartFactory(this._factory, ClientId);
   }
 
   get factory() {
