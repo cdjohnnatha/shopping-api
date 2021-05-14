@@ -7,6 +7,7 @@ const {
 } = require('./cart-items-resolvers');
 const { AddCartItemInputType, UpdateCartItemQuantityInputType } = require('./cart-items-input-types');
 const { CartType } = require('../cart-types');
+const { authorization } = require('../../authorization');
 
 const cartItemMutations = {
   addCartItem: {
@@ -17,7 +18,11 @@ const cartItemMutations = {
         type: AddCartItemInputType,
       },
     },
-    resolve: AddCartItemResolver,
+    resolve: (obj, args, context) => authorization(AddCartItemResolver, {
+      obj,
+      args,
+      context,
+    }),
   },
   updateCartItemQuantity: {
     type: CartType,
@@ -27,7 +32,11 @@ const cartItemMutations = {
         type: UpdateCartItemQuantityInputType,
       },
     },
-    resolve: UpdateCartItemQuantityResolver,
+    resolve: (obj, args, context) => authorization(UpdateCartItemQuantityResolver, {
+      obj,
+      args,
+      context,
+    }),
   },
   removeCartItem: {
     type: CartType,
@@ -35,7 +44,11 @@ const cartItemMutations = {
     args: {
       productId: { type: GraphQLNonNull(GraphQLID) },
     },
-    resolve: RemoveCartItemResolver,
+    resolve: (obj, args, context) => authorization(RemoveCartItemResolver, {
+      obj,
+      args,
+      context,
+    }),
   },
 };
 

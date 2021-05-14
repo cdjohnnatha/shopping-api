@@ -2,6 +2,7 @@
 const { cartCheckoutResolver } = require('./cart-resolvers');
 const { OrderType } = require('../order/order-types');
 const { PaymentInputType } = require('../payment/payment-input-types');
+const { authorization } = require('../authorization');
 
 const cartMutations = {
   checkout: {
@@ -12,7 +13,11 @@ const cartMutations = {
       },
     },
     description: 'Method used to purchase items from cart.',
-    resolve: cartCheckoutResolver,
+    resolve: (obj, args, context) => authorization(cartCheckoutResolver, {
+      obj,
+      args,
+      context,
+    }),
   },
 };
 

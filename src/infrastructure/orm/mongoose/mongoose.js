@@ -66,6 +66,8 @@ class MongooseSingleton {
     logger.debug(productPipelineError);
     return productPipelineError;
   }
+
+  toObjectId = (id) => this.instance.Types.ObjectId(id);
 }
 
 

@@ -41,6 +41,7 @@ const graphqlMiddleware = graphqlHTTP(req => ({
     ip: req.ip,
     device_data: req.device_data,
     index: req.index,
+    user: req.user,
   },
   customFormatErrorFn: formatGraphqlErrorMessages,
 }));
