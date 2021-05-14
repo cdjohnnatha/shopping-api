@@ -1,14 +1,15 @@
 const Mongoose = require('../orm/mongoose/mongoose');
 const MongooseCart = require('../orm/mongoose/schemas/CartSchema');
 const MongooseProducts = require('../orm/mongoose/schemas/Products');
+const ProductRepositoryMongo = require('../repositories/productRepositoryMongo');
 const MongooseOrder = require('../orm/mongoose/schemas/OrderSchema');
 const logger = require('../config/logs/logger');
-const defaultClientId = '6099cd86f1dd766242d7ff2b';
+// const this._clientId = '6099cd86f1dd766242d7ff2b';
 
 module.exports = class {
-  constructor() {
-    this._clientId = defaultClientId;
-    this._findCartQuery = { clientId: defaultClientId, status: 'Active' };
+  constructor({ clientId }) {
+    this._clientId = clientId;
+    this._findCartQuery = { clientId, status: 'Active' };
   }
 
   async getActiveCart() {
@@ -18,6 +19,20 @@ module.exports = class {
     } catch (error) {
       logger.error({ from: 'getActiveCart', error });
     }
+  }
+  
+  addSingleProductToCart(productToPush) {
+    return MongooseCart.updateOne(
+      this._findCartQuery,
+      {
+        $set: { updatedAt: new Date() },
+        $inc: { quantity: +1, total: +productToPush.price },
+        $push: {
+          products: productToPush,
+        },
+      },
+      { upsert: true }
+    ).exec();
   }
 
   async addCartItem({ productId }) {
@@ -30,34 +45,12 @@ module.exports = class {
       
       if (product) {
         product = product.toObject();
-        let productUpdate = MongooseProducts.updateOne(
-          { _id: productId, quantityAvailable: { $gte: 1 } },
-          {
-            $inc: { quantityAvailable: -1 },
-            $push: {
-              in_carts: {
-                quantity: 1,
-                clientId: defaultClientId,
-                timestamp: new Date(),
-              },
-            },
-          }
-        ).exec();
-
+        const productRepository = new ProductRepositoryMongo();
+        let productUpdate = productRepository.reserveSingleProductToCart({ productId });
         const productToPush = { ...product, quantity: 1 };
         productToPush.productId = product._id;
-        delete (productToPush._id)
-        let cartUpdated = MongooseCart.updateOne(
-          this._findCartQuery,
-          {
-            $set: { updatedAt: new Date() },
-            $inc: { quantity: +1, total: +product.price },
-            $push: {
-              products: productToPush,
-            },
-          },
-          { upsert: true }
-        ).exec();
+        delete (productToPush._id);
+        let cartUpdated = this.addSingleProductToCart(productToPush);
         [productUpdate, cartUpdated] = await Promise.all([cartUpdated, productUpdate]);
       
       const cart = await MongooseCart.findOne(this._findCartQuery).exec();
@@ -76,7 +69,7 @@ module.exports = class {
       const product = (await MongooseProducts.findOne(
         {
           _id: Mongoose.instance.Types.ObjectId(productId),
-          'in_carts.clientId': defaultClientId,
+          'in_carts.clientId': this._clientId,
           quantityAvailable: { $gte: 1 },
         },
       )).toObject();
@@ -88,10 +81,8 @@ module.exports = class {
       if (product.quantityAvailable < quantity) {
         throw new Error('Not enough quantity available for this item');
       }
-      // if (currentProduct.quantityAvailable < quantity) {
-      //   throw new Error('Not enough available quantity for this item');
-      // }
-      const cart = (await MongooseCart.findOne(this._findCartQuery, { products: 1 }).exec()).toObject();
+      const cartDbItem = await MongooseCart.findOne(this._findCartQuery, { products: 1 }).exec();
+      let cart = cartDbItem.toObject();
       let cartProduct = null;
       for (const product of cart.products) {
         if (product.productId.toString() === productId) {
@@ -107,6 +98,7 @@ module.exports = class {
           'products.productId': productId,
         };
 
+
         await MongooseCart.updateOne(cartItemQuery, {
           $inc: {
             total: +(quantity * cartProduct.price),
@@ -117,21 +109,9 @@ module.exports = class {
             updatedAt: new Date(),
           },
         }).exec();
-
-        await MongooseProducts.updateOne(
-          {
-            _id: Mongoose.instance.Types.ObjectId(productId),
-            'in_carts.clientId': defaultClientId,
-            quantityAvailable: { $gte: 1 },
-          },
-          {
-            $inc: { quantityAvailable: -1 * quantity },
-            $set: {
-              'in_carts.$.quantity': quantity + cartProduct.quantity,
-              timestamp: new Date(),
-            },
-          }
-        );
+        const productRepository = new ProductRepositoryMongo();
+        const productAddedParams = { productId, clientId: this._clientId, cartProduct, quantityAdded: quantity };
+        await productRepository.updateProductAfterAddInCart(productAddedParams)
 
         const cartUpdated = await MongooseCart.findOne(this._findCartQuery);
         return cartUpdated.toObject();
@@ -159,22 +139,16 @@ module.exports = class {
       }
       if (currentProduct) {
         await MongooseCart.updateOne(
-          { clientId: defaultClientId, status: 'Active' },
+          { clientId: this._clientId, status: 'Active' },
           {
             $pull: { products: { productId } },
             $inc: { quantity: -currentProduct.quantity, total: -currentProduct.price },
             $set: { updatedAt: new Date() },
           }
         ).exec();
-
-        await MongooseProducts.updateOne(
-          { _id: Mongoose.instance.Types.ObjectId(productId) },
-          {
-            $inc: { quantityAvailable: +currentProduct.quantity },
-            $pull: { in_carts: { clientId: this._clientId } },
-          }
-        ).exec();
-
+        const productRepository = new ProductRepositoryMongo();
+        const reservedProduct = { productId, quantity: currentProduct.quantity, clientId: this._clientId };
+        await productRepository.removeProductReservation(reservedProduct);
         const cartUpdated = await MongooseCart.findOne(this._findCartQuery).exec();
         return cartUpdated;
       }
@@ -217,15 +191,17 @@ module.exports = class {
       const orderCreated = (await MongooseOrder.create(order)).toObject();
 
       if (isPaymentApproved) {
-        await MongooseProducts.updateMany(
-          {
-            _id: { $in: productIds },
-            'in_carts.clientId': this._clientId,
-          },
-          {
-            $pull: { in_carts: { clientId: this._clientId } },
-          }
-        ).exec();
+        const productRepository = new ProductRepositoryMongo();
+        await productRepository.confirmClientProductsPurchase({ clientId: this._clientId, productIds });
+        // await MongooseProducts.updateMany(
+        //   {
+        //     _id: { $in: productIds },
+        //     'in_carts.clientId': this._clientId,
+        //   },
+        //   {
+        //     $pull: { in_carts: { clientId: this._clientId } },
+        //   }
+        // ).exec();
 
         await MongooseCart.updateOne(this._findCartQuery, { status: 'Inactive' }).exec();
       }
