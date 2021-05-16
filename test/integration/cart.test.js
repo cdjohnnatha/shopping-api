@@ -149,7 +149,7 @@ describe('Carts', () => {
   it('Increment product quantity in a cart when available with limit of quantity', async () => {
     let cartItem = buildGraphqlInputFromObject({
       productId: productFromCart.productId.toString(),
-      quantity: 1,
+      quantity: 2,
     });
     cartItem = `cartItem: { ${cartItem} }`;
     const updatedCartResponse = await chai
@@ -218,7 +218,7 @@ describe('Carts', () => {
   it('Increment invalid product quantity in a cart should return error', async () => {
     let cartItem = buildGraphqlInputFromObject({
       productId: productFromCart.productId.toString(),
-      quantity: 1,
+      quantity: 9999,
     });
     cartItem = `cartItem: { ${cartItem} }`;
     const updatedCartResponse = await chai
@@ -226,12 +226,12 @@ describe('Carts', () => {
       .post(API_URL)
       .send({ query: updateCartItemQuantityMutation(cartItem) });
     expect(updatedCartResponse).to.have.status(200);
-    const cartUpdated = getResultFromQuery(updatedCartResponse.body, 'addCartItem');
-    const cartUpdatedSharedExamples = new CartSharedExamples(cartUpdated);
-    cartUpdatedSharedExamples.shouldBehaveLikeCart();
-    expect(cartUpdated.total).to.above(cartBeforeChanges.total);
-    expect(cartUpdated.quantity).to.above(cartBeforeChanges.quantity);
-    expect(cartUpdated.quantity).to.eq(cartBeforeChanges.quantity + 1);
+    expect(updatedCartResponse.error).to.exist;
+    const graphqlSharedExamples = new GraphqlSharedExamples({
+      error: updatedCartResponse.body.errors,
+      queryName: 'updateCartItemQuantity',
+    });
+    graphqlSharedExamples.shouldBehaveLikeGraphqlError();
 
     const productFilter = `filters: { idList: ["${productFromCart.productId.toString()}"] }`;
     const productAfterAddedInCartResponse = await chai
@@ -243,7 +243,7 @@ describe('Carts', () => {
     const productSharedExamples = new ProductsSharedExamples(productAfterAddedInCart);
     productSharedExamples.shouldBehaveLikeProduct();
     productSharedExamples.shouldBehaveLikeProductWithItensInCart();
-    expect(productAfterAddedInCart[0].quantityAvailable).to.below(
+    expect(productAfterAddedInCart[0].quantityAvailable).to.eq(
       productBeforeChanges[0].quantityAvailable
     );
   });

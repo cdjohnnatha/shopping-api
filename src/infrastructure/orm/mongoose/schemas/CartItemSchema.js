@@ -8,6 +8,10 @@ const CartItemSchema = new Schema({
     type: String,
     required: true
   },
+  name:  {
+    type: String,
+    required: true
+  },
   quantity: {
     type: Number,
     min: [0, 'minimum allowed is 0'],

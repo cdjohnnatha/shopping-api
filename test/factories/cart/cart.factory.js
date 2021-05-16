@@ -18,6 +18,7 @@ const CartFactory = (factory, clientId) =>
       for (const productAttached of buildOptions.attachProduct) {
         attrs.total += productAttached.price;
         attrs.products.push({
+          name: productAttached.name,
           productId: `${productAttached._id}`,
           quantity: 1,
           price: productAttached.price,

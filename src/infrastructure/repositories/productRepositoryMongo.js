@@ -53,7 +53,7 @@ module.exports = class {
     );
   }
 
-  reserveSingleProductToCart({ productId }) {
+  reserveSingleProductToCart({ productId, clientId }) {
     return MongooseProducts.updateOne(
       { _id: productId, quantityAvailable: { $gte: 1 } },
       {
@@ -61,7 +61,7 @@ module.exports = class {
         $push: {
           in_carts: {
             quantity: 1,
-            clientId: this._clientId,
+            clientId: clientId,
             timestamp: new Date(),
           },
         },

@@ -1,3 +1,10 @@
+install:
+	npm install
+start:
+	npm start
+seed:
+	npm run seed:
+
 build_db:
 	docker run -p 27017:27017 --name mongo-mall -d mongo
 

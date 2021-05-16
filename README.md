@@ -6,17 +6,16 @@
 <!-- vscode-markdown-toc -->
 0. [Requirements](#Requirements)
 1. [Intro](#Intro)
-2. [Challenge](#Intro)
-3. [Shopping-frontend](#ShoppingFrontend)
-4. [Installation](#Installation)
+2. [Shopping-frontend](#ShoppingFrontend)
+3. [Installation](#Installation)
     1. [Node](#Node)
     2. [Makefile](#Makefile)
     3. [Docker](#Docker)
-5. [Usage](#Usage)
-6. [Database](#Database)
-7. [Tests](#Tests)
-8. [License](#License)
-9. [Next steps](#NextSteps)
+4. [Usage](#Usage)
+5. [Database](#Database)
+6. [Tests](#Tests)
+7. [License](#License)
+8. [Next steps](#NextSteps)
 
 
 ## 0. <a name='Requirements'></a>Requirements
@@ -31,21 +30,21 @@ The shopping-api is an api graphql based built in express used to basic ecomerce
 
 ### 1.2. Database architecture
 
-![picture](public/private-images/shoppingJpg.jpg)
+![picture](public/private-images/shoppingJpg.png)
 
-## 4. 📦 <a name='ShoppingFrontend'></a>Shopping Frontend
+## 2. 📦 <a name='ShoppingFrontend'></a>Shopping Frontend
 
 This api it was designed based on the [shopping-cart-react](https://github.com/cdjohnnatha/shopping-cart-react)
 
 # Install and build api and frontend together:
-## 4.1 📦 <a name='folderCreation'></a>Folder creation
+## 2.1 📦 <a name='folderCreation'></a>Folder creation
 ```
   $ mkdir shopping
   $ cd shopping
   $ touch docker-compose.yaml
 ```
 
-## 4.2 Open the docker-compose.yaml and use as base the setup bellow:
+## 2.2 Open the docker-compose.yaml and use as base the setup bellow:
 
 ```
   version: '3.8'
@@ -93,7 +92,7 @@ services:
 volumes:
   mongo_shared:
 ```
-## 4.3 Clone both projects at the directory
+## 2.3 Clone both projects at the directory
 
 ```
     $   git clone https://github.com/cdjohnnatha/shopping-api
@@ -101,7 +100,7 @@ volumes:
     $ git clone https://github.com/cdjohnnatha/shopping-cart-react
 ```
 
-## 4.4 Run the project
+## 2.4 Run the project
 ```
     $   docker-compose up
 ```
@@ -129,12 +128,17 @@ Inside of project directory run the commands bellow:
   npm install
   npm start
 ```
+make sure that you have a mongodb running in your machine.
 
 ### 3.2 Makefile
 Inside of project directory run the commands bellow:
 ```
-    make production
+  make install
+  make seed
+  make start
 ```
+
+make sure that you have a mongodb running in your machine.
 ### 3.3 Docker
 
 #### Dependencies
@@ -142,7 +146,8 @@ Inside of project directory run the commands bellow:
 ***You need to have a docker and docker-compose installed in your machine.***
 
 ```
-    docker-compose up
+    docker build -t shopping-api .
+    docker run -p 3000:3000 -t shopping-api
 ```
 
 ## 4. 📖 <a name='Usage'></a>Usage
@@ -171,13 +176,21 @@ The database used is Mongodb with mongoose.
 
 The database initialization it will pretty much create the database, run the migrations and run all seeds:
 
+***To run the commands bellow make sure that you have a mongodb running***
+
 ### 5.1 Node
 
 ```
   npm run seeders
 ```
 
-## 7. 📄 <a name='Tests'></a>Tests
+### 5.2 Makefile
+
+```
+  make seed
+```
+
+## 6. 📄 <a name='Tests'></a>Tests
 
 You can run the applications tests with
 
@@ -185,5 +198,10 @@ You can run the applications tests with
   npm test
 ```
 
-## 8. 📄 <a name='License'></a>License
+## 7. 📄 <a name='License'></a>License
 Simple Object Handler is [MIT licensed](./LICENSE).
+
+## 8. 📄 <a name='NextSteps'></a>Next Steps
+1. Create authentication proccess with sign in/sign out
+2. split project in microservice architecture
+3. Improve tests 
