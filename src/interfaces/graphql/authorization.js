@@ -1,4 +1,4 @@
-const logger = require('../../infrastructure/config/logs/logger');
+const logger = require('../../infrastructure/config/logger/logger');
 
 const authorization = (resolve, params) => {
   const { obj, args, context } = params;

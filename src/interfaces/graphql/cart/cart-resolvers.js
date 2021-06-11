@@ -1,4 +1,4 @@
-const logger = require('../../../infrastructure/config/logs/logger');
+const logger = require('../../../infrastructure/config/logger/logger');
 const CartRepositoryMongo = require('../../../infrastructure/repositories/cartRepositoryMongo');
 
 const activeCartResolver = async (_obj, _args, context) => {

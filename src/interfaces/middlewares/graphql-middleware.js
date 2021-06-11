@@ -1,6 +1,6 @@
 const { graphqlHTTP } = require('express-graphql');
 
-const logger = require('../../infrastructure/config/logs/logger');
+const logger = require('../../infrastructure/config/logger/logger');
 const { publicSchema } = require('../graphql/schema');
 
 /**

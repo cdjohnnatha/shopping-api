@@ -3,7 +3,7 @@ const MongooseCart = require('../orm/mongoose/schemas/CartSchema');
 const MongooseProducts = require('../orm/mongoose/schemas/Products');
 const ProductRepositoryMongo = require('../repositories/productRepositoryMongo');
 const MongooseOrder = require('../orm/mongoose/schemas/OrderSchema');
-const logger = require('../config/logs/logger');
+const logger = require('../config/logger/logger');
 
 module.exports = class {
   constructor({ clientId }) {

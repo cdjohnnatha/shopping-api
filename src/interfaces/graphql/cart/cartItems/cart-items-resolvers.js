@@ -1,5 +1,5 @@
 
-const logger = require('../../../../infrastructure/config/logs/logger')
+const logger = require('../../../../infrastructure/config/logger/logger')
 const CartRepositoryMongo = require('../../../../infrastructure/repositories/cartRepositoryMongo');
 const ProductRepositoryMongo = require('../../../../infrastructure/repositories/productRepositoryMongo');
 

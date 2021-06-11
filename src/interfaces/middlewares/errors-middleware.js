@@ -1,4 +1,4 @@
-const logger = require('../../infrastructure/config/logs/logger');
+const logger = require('../../infrastructure/config/logger/logger');
 const { httpCodes } = require('../../utils/consts/request-consts')
 
 const defaultErrorHandler = (err, req, res, next) => {

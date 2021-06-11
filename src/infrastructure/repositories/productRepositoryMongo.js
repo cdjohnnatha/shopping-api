@@ -1,6 +1,6 @@
 const Mongoose = require('../orm/mongoose/mongoose');
 const MongooseProducts = require('../orm/mongoose/schemas/Products');
-const logger = require('../config/logs/logger');
+const logger = require('../config/logger/logger');
 
 module.exports = class {
   constructor() {}
